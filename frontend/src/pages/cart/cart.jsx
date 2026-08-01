@@ -4,7 +4,7 @@ import './cart.css'
 import { StoreContext } from '../../context/storeContext'
 
 const Cart = () => {
-  const { cartItems, food_list, getTotalCartAmount, removeFromCart } = useContext(StoreContext)
+  const { cartItems, food_list, getTotalCartAmount, removeFromCart, url } = useContext(StoreContext)
   const subtotal = getTotalCartAmount()
   const deliveryFee = subtotal === 0 ? 0 : 2
   const total = subtotal + deliveryFee
@@ -29,7 +29,7 @@ const Cart = () => {
           return (
             <div key={item._id}>
               <div className="cart-items-title cart-items-item">
-                <img src={item.image} alt={item.name} />
+                <img src={`${url}/images/${item.image}`} alt={item.name} />
                 <p>{item.name}</p>
                 <p>${item.price}</p>
                 <p>{cartItems[item._id]}</p>

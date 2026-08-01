@@ -1,9 +1,11 @@
-import { useState } from 'react'
-import { food_list } from '../assets/frontend_assets/assets'
+import { useEffect, useState } from 'react'
 import { StoreContext } from './storeContext'
 
 const StoreContextProvider = ({ children }) => {
   const [cartItems, setCartItems] = useState({})
+  const [food_list, setFoodList] = useState([])
+  const [token, setToken] = useState('')
+  const url = 'http://localhost:4000'
 
   const addToCart = (itemId) => {
     setCartItems((prev) => ({
@@ -25,7 +27,9 @@ const StoreContextProvider = ({ children }) => {
     for (const itemId in cartItems) {
       if (cartItems[itemId] > 0) {
         const itemInfo = food_list.find((product) => product._id === itemId)
-        totalAmount += itemInfo.price * cartItems[itemId]
+        if (itemInfo) {
+          totalAmount += itemInfo.price * cartItems[itemId]
+        }
       }
     }
 
@@ -36,6 +40,27 @@ const StoreContextProvider = ({ children }) => {
     return Object.values(cartItems).reduce((total, count) => total + count, 0)
   }
 
+  const loadFoodList = async () => {
+    const response = await fetch(`${url}/api/food/list`)
+    const data = await response.json()
+
+    if (data.success) {
+      setFoodList(data.data)
+    }
+  }
+
+  useEffect(() => {
+    async function loadData() {
+      await loadFoodList()
+
+      if (localStorage.getItem('token')) {
+        setToken(localStorage.getItem('token'))
+      }
+    }
+
+    loadData()
+  }, [])
+
   const contextValue = {
     addToCart,
     cartItems,
@@ -43,6 +68,9 @@ const StoreContextProvider = ({ children }) => {
     getTotalCartAmount,
     getTotalCartItems,
     removeFromCart,
+    setToken,
+    token,
+    url,
   }
 
   return (

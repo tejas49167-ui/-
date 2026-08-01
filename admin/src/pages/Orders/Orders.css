@@ -1,0 +1,13 @@
+.order-item {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin-top: 30px;
+  padding: 20px;
+  border: 1px solid tomato;
+  color: #505050;
+}
+
+.order-item img {
+  width: 50px;
+}
