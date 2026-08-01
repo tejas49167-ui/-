@@ -1,11 +1,11 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { StoreContext } from './storeContext'
 
 const StoreContextProvider = ({ children }) => {
   const [cartItems, setCartItems] = useState({})
   const [food_list, setFoodList] = useState([])
   const [token, setToken] = useState('')
-  const url = 'http://localhost:4000'
+  const url = import.meta.env.VITE_BACKEND_URL || 'http://localhost:4000'
 
   const addToCart = (itemId) => {
     setCartItems((prev) => ({
@@ -40,14 +40,14 @@ const StoreContextProvider = ({ children }) => {
     return Object.values(cartItems).reduce((total, count) => total + count, 0)
   }
 
-  const loadFoodList = async () => {
+  const loadFoodList = useCallback(async () => {
     const response = await fetch(`${url}/api/food/list`)
     const data = await response.json()
 
     if (data.success) {
       setFoodList(data.data)
     }
-  }
+  }, [url])
 
   useEffect(() => {
     async function loadData() {
@@ -59,7 +59,7 @@ const StoreContextProvider = ({ children }) => {
     }
 
     loadData()
-  }, [])
+  }, [loadFoodList])
 
   const contextValue = {
     addToCart,
