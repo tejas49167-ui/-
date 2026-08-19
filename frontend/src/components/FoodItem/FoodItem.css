@@ -52,10 +52,14 @@
 
 .food-item-img-container .add{
     position: absolute;
+    z-index: 2;
+    display: grid;
+    place-items: center;
     width: 35px;
     height: 35px;
     right: 15px;
     bottom: 15px;
+    padding: 0;
     border: none;
     border-radius: 50%;
     background: transparent;
@@ -70,6 +74,7 @@
 
 .food-item-counter{
     position: absolute;
+    z-index: 2;
     right: 15px;
     bottom: 15px;
     display: flex;
@@ -81,8 +86,11 @@
 }
 
 .food-item-counter button{
+    display: grid;
+    place-items: center;
     width: 30px;
     height: 30px;
+    padding: 0;
     border: none;
     border-radius: 50%;
     background: transparent;
