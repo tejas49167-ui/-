@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
+import axios from 'axios'
 import { StoreContext } from './storeContext'
 
 const StoreContextProvider = ({ children }) => {
@@ -7,18 +8,26 @@ const StoreContextProvider = ({ children }) => {
   const [token, setToken] = useState('')
   const url = import.meta.env.VITE_BACKEND_URL || 'http://localhost:4000'
 
-  const addToCart = (itemId) => {
+  const addToCart = async (itemId) => {
     setCartItems((prev) => ({
       ...prev,
       [itemId]: (prev[itemId] || 0) + 1,
     }))
+
+    if (token) {
+      await axios.post(`${url}/api/cart/add`, { itemId }, { headers: { token } })
+    }
   }
 
-  const removeFromCart = (itemId) => {
+  const removeFromCart = async (itemId) => {
     setCartItems((prev) => ({
       ...prev,
       [itemId]: Math.max((prev[itemId] || 0) - 1, 0),
     }))
+
+    if (token) {
+      await axios.post(`${url}/api/cart/remove`, { itemId }, { headers: { token } })
+    }
   }
 
   const getTotalCartAmount = () => {
@@ -41,11 +50,18 @@ const StoreContextProvider = ({ children }) => {
   }
 
   const loadFoodList = useCallback(async () => {
-    const response = await fetch(`${url}/api/food/list`)
-    const data = await response.json()
+    const response = await axios.get(`${url}/api/food/list`)
 
-    if (data.success) {
-      setFoodList(data.data)
+    if (response.data.success) {
+      setFoodList(response.data.data)
+    }
+  }, [url])
+
+  const loadCartData = useCallback(async (authToken) => {
+    const response = await axios.post(`${url}/api/cart/get`, {}, { headers: { token: authToken } })
+
+    if (response.data.success) {
+      setCartItems(response.data.cartData)
     }
   }, [url])
 
@@ -55,11 +71,12 @@ const StoreContextProvider = ({ children }) => {
 
       if (localStorage.getItem('token')) {
         setToken(localStorage.getItem('token'))
+        await loadCartData(localStorage.getItem('token'))
       }
     }
 
     loadData()
-  }, [loadFoodList])
+  }, [loadCartData, loadFoodList])
 
   const contextValue = {
     addToCart,

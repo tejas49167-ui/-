@@ -1,4 +1,5 @@
 import React, { useContext, useState } from 'react';
+import axios from 'axios';
 import './LoginPopup.css';
 import { assets } from '../../assets/frontend_assets/assets';
 import { StoreContext } from '../../context/storeContext';
@@ -21,12 +22,8 @@ const LoginPopup = ({ setShowLogin }) => {
         event.preventDefault();
 
         const endpoint = currState === 'Login' ? '/api/user/login' : '/api/user/register';
-        const response = await fetch(`${url}${endpoint}`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(data),
-        });
-        const result = await response.json();
+        const response = await axios.post(`${url}${endpoint}`, data);
+        const result = response.data;
 
         if (result.success) {
             setToken(result.token);

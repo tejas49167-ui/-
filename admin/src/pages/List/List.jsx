@@ -1,32 +1,31 @@
 import { useEffect, useState } from 'react'
+import axios from 'axios'
+import { toast } from 'react-toastify'
 import './List.css'
 
 const List = ({ url }) => {
   const [list, setList] = useState([])
 
   const fetchList = async () => {
-    const response = await fetch(`${url}/api/food/list`)
-    const result = await response.json()
+    const response = await axios.get(`${url}/api/food/list`)
+    const result = response.data
 
     if (result.success) {
       setList(result.data)
     } else {
-      alert('Error')
+      toast.error('Error')
     }
   }
 
   const removeFood = async (foodId) => {
-    const response = await fetch(`${url}/api/food/remove`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ id: foodId }),
-    })
-    const result = await response.json()
+    const response = await axios.post(`${url}/api/food/remove`, { id: foodId })
+    const result = response.data
 
     if (result.success) {
       await fetchList()
+      toast.success(result.message)
     } else {
-      alert('Error')
+      toast.error('Error')
     }
   }
 

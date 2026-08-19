@@ -5,3 +5,9 @@ dist
 !*.env.example
 backend/uploads/*
 !backend/uploads/.gitkeep
+
+# Unrelated local files
+backend/config/Antigravity-x64/
+backend/config/Antigravity.tar.gz
+backend/config/i.mp4
+backend/config/*.jpg

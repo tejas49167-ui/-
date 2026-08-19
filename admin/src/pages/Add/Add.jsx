@@ -1,4 +1,6 @@
 import { useState } from 'react'
+import axios from 'axios'
+import { toast } from 'react-toastify'
 import './Add.css'
 import { assets } from '../../assets/assets'
 
@@ -20,7 +22,7 @@ const Add = ({ url }) => {
     event.preventDefault()
 
     if (!image) {
-      alert('Please select an image')
+      toast.error('Please select an image')
       return
     }
 
@@ -31,11 +33,8 @@ const Add = ({ url }) => {
     formData.append('category', data.category)
     formData.append('image', image)
 
-    const response = await fetch(`${url}/api/food/add`, {
-      method: 'POST',
-      body: formData,
-    })
-    const result = await response.json()
+    const response = await axios.post(`${url}/api/food/add`, formData)
+    const result = response.data
 
     if (result.success) {
       setData({
@@ -45,9 +44,9 @@ const Add = ({ url }) => {
         category: 'Salad',
       })
       setImage(false)
-      alert(result.message)
+      toast.success(result.message)
     } else {
-      alert(result.message)
+      toast.error(result.message)
     }
   }
 
