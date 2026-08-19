@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 import axios from 'axios'
+import { food_list as sampleFoodList } from '../assets/frontend_assets/assets'
 import { StoreContext } from './storeContext'
 
 const StoreContextProvider = ({ children }) => {
@@ -50,10 +51,16 @@ const StoreContextProvider = ({ children }) => {
   }
 
   const loadFoodList = useCallback(async () => {
-    const response = await axios.get(`${url}/api/food/list`)
+    try {
+      const response = await axios.get(`${url}/api/food/list`)
 
-    if (response.data.success) {
-      setFoodList(response.data.data)
+      if (response.data.success && response.data.data.length > 0) {
+        setFoodList(response.data.data)
+      } else {
+        setFoodList(sampleFoodList)
+      }
+    } catch (error) {
+      setFoodList(sampleFoodList)
     }
   }, [url])
 
